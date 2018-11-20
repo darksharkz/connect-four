@@ -13,10 +13,11 @@ public class MyAI extends AI{
 	public void start(Board b) {
 		turn = b.getCurrentPlayer();
 		int depth = 1;
-		while(depth <= 1){
+		while(true){
 			Move move = generateMove(b, depth);
+			//System.out.println("Move: " + move);
 			setBestMove(move);
-			System.out.println(depth);
+			//System.out.println("Tiefe: " + depth);
 			depth++;			
 		}		
 	}
@@ -26,7 +27,7 @@ public class MyAI extends AI{
 		Move move = null;
 		
 		for(Move m : b.possibleMoves()){
-			int s = minimize(b.executeMove(m), depth - 1);
+			int s = minimax(b.executeMove(m), depth - 1, false);
 			if (s > score){
 				score = s;
 				move = m;
@@ -37,6 +38,12 @@ public class MyAI extends AI{
 	}
 	
 	private int maximize(Board b, int depth){
+		if(b.getWinner() == turn){
+			return 1000;
+		}
+		if(b.getWinner() == turn.next()){
+			return -1000;
+		}
 		if(depth == 0){
 			return scoring(b);
 		}
@@ -53,6 +60,12 @@ public class MyAI extends AI{
 	}
 	
 	private int minimize(Board b, int depth){
+		if(b.getWinner() == turn){
+			return 1000;
+		}
+		if(b.getWinner() == turn.next()){
+			return -1000;
+		}
 		if(depth == 0){
 			return scoring(b);
 		}
@@ -60,6 +73,38 @@ public class MyAI extends AI{
 			int score = Integer.MAX_VALUE;
 			for(Move m : b.possibleMoves()){
 				int s = maximize(b.executeMove(m), depth - 1);
+				if (s < score){
+					score = s;
+				}
+			}
+			return score;
+		}
+	}
+	
+	private int minimax(Board b, int depth, boolean max){
+		if(b.getWinner() == turn){
+			return 1000;
+		}
+		if(b.getWinner() == turn.next()){
+			return -1000;
+		}
+		if(depth == 0){
+			return scoring(b);
+		}
+		if(max){
+			int score = Integer.MIN_VALUE;
+			for(Move m : b.possibleMoves()){
+				int s = minimax(b.executeMove(m), depth - 1, false);
+				if (s > score){
+					score = s;
+				}
+			}
+			return score;
+		}
+		else{
+			int score = Integer.MAX_VALUE;
+			for(Move m : b.possibleMoves()){
+				int s = minimax(b.executeMove(m), depth - 1, true);
 				if (s < score){
 					score = s;
 				}
@@ -79,9 +124,13 @@ public class MyAI extends AI{
 		}
 		
 		score = score + getVerticalPossibilities(b.getState(), turn) - getVerticalPossibilities(b.getState(), turn.next());
+		//System.out.println(score);
 		score = score + getHorizontalPossibilities(b.getState(), turn) - getHorizontalPossibilities(b.getState(), turn.next());
+		//System.out.println(score);
 		score = score + getDiagonal45Possibilities(b.getState(), turn) - getDiagonal45Possibilities(b.getState(), turn.next());
+		//System.out.println(score);
 		score = score + getDiagonal315Possibilities(b.getState(), turn) - getDiagonal315Possibilities(b.getState(), turn.next());
+		//System.out.println(score);
 		
 		//System.out.println("Scoring for player " + turn + ": " + score);
 		//System.out.println(b);		
@@ -132,11 +181,11 @@ public class MyAI extends AI{
 		
 		Player next = turn.next();
 	    for (int y = board.length - 1; y >= 3; y--) {
-	        for (int x = 0; x < board[0].length - 4; x++) {
+	        for (int x = 0; x < board[0].length - 3; x++) {
 	          if (board[y][x] != next &&
-	              board[y - 1][x] != next &&
-	              board[y - 2][x] != next &&
-	              board[y - 3][x] != next)
+	              board[y - 1][x + 1] != next &&
+	              board[y - 2][x + 2] != next &&
+	              board[y - 3][x + 3] != next)
 	          {
 	            score++;
 	          }

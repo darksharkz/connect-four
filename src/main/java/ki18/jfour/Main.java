@@ -12,6 +12,13 @@ class Main {
       System.out.println(b);
       System.out.println();
       System.out.println();
+//      if (b.getWinner() != Player.NONE){
+//    	  break;
+//      }
+//      b = playerMove(b);
+//      System.out.println(b);
+//      System.out.println();
+//      System.out.println();
     }
 
     System.out.println(b.getWinner());
@@ -31,5 +38,11 @@ class Main {
       Thread.sleep(time);
       t.stop();
       return b.executeMove(ai.getBestMove().get());
+  }
+  
+  private static Board playerMove(Board b){
+	  Scanner scanner = new Scanner(System.in);
+	  int row = scanner.nextInt();
+	  return b.executeMove(new Move(row-1));
   }
 }

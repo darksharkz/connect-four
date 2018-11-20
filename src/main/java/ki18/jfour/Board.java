@@ -113,7 +113,7 @@ public class Board {
 
   private Player getDiagonalWinner45() {
     for (int y = height - 1; y >= 3; y--) {
-      for (int x = 0; x < width - 4; x++) {
+      for (int x = 0; x < width - 3; x++) {
         if (board[y][x] != Player.NONE &&
             board[y][x] == board[y - 1][x + 1] &&
             board[y][x] == board[y - 2][x + 2] &&
